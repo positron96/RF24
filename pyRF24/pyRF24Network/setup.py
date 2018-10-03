@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 import sys
 
 if sys.version_info >= (3,): 
-    BOOST_LIB = 'boost_python3' 
+    BOOST_LIB = 'boost_python-py35' 
 else: 
     BOOST_LIB = 'boost_python' 
 
