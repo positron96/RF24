@@ -46,7 +46,7 @@ using namespace std;
 //RF24 radio(RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ);
 
 // RPi generic:
-RF24 radio(22,0);
+//RF24 radio(22,0);
 
 /*** RPi Alternate ***/
 //Note: Specify SPI BUS 0 or 1 instead of CS pin number.
@@ -66,7 +66,7 @@ RF24 radio(22,0);
 // See https://www.kernel.org/doc/Documentation/spi/spidev for more information on SPIDEV
 
 // Setup for ARM(Linux) devices like BBB using spidev (default is "/dev/spidev1.0" )
-//RF24 radio(115,0);
+RF24 radio(48, 10);
 
 //BBB Alternate, with mraa
 // CE pin = (Header P9, Pin 13) = 59 = 13 + 46 
@@ -91,7 +91,10 @@ int main(int argc, char** argv){
   cout << "RF24/examples/GettingStarted/\n";
 
   // Setup and configure rf radio
-  radio.begin();
+  if( !radio.begin() ) {
+    printf("radio.begin failed\n");
+    return 1;
+  }
 
   // optionally, increase the delay between retries & # of retries
   radio.setRetries(15,15);
