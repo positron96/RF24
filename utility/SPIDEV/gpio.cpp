@@ -21,26 +21,32 @@ GPIO::~GPIO() {
 
 void GPIO::open(int port, int DDR)
 {
-	FILE *f;
-	f = fopen("/sys/class/gpio/export", "w");
-	fprintf(f, "%d\n", port);
-	fclose(f);
+    char file[128];
+    sprintf(file, "/sys/class/gpio/gpio%d/direction", port);
+
+    if( access(file, W_OK) == -1) {
+        FILE *f;
+        f = fopen("/sys/class/gpio/export", "w");
+        fprintf(f, "%d\n", port);
+        fclose(f);
+    }
 
     int counter = 0;
-	char file[128];    
-	sprintf(file, "/sys/class/gpio/gpio%d/direction", port);  
-    
+
+    FILE *f;
     while( ( f = fopen(file,"w")) == NULL ){ //Wait 10 seconds for the file to be accessible if not open on first attempt
         sleep(1);
         counter++;
         if(counter > 10){
-          perror("Could not open /sys/class/gpio/gpio%d/direction");
-          exit(0);
+            char msg[256];
+            snprintf(msg, 255, "Could not open %s", file);
+            perror(msg);
+            exit(0);
         }
     }
-	if (DDR == 0)
-          fprintf(f, "in\n");
-	else  fprintf(f, "out\n");
+    if (DDR == 0)
+	fprintf(f, "in\n");
+    else  fprintf(f, "out\n");
     
     fclose(f);
 
